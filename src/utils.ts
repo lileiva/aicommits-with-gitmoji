@@ -60,9 +60,9 @@ export const getStagedDiff = async () => {
 
 export const getDetectedMessage = (files: string[]) => `Detected ${files.length.toLocaleString()} staged file${files.length > 1 ? 's' : ''}`;
 
-const sanitizeMessage = (message: string) => message.trim().replace(/[\n\r]/g, '').replace(/(\w)\.$/, '$1');
+const sanitizeMessage = (message: string) => message.trim();
 
-const promptTemplate = 'Write an insightful but concise Git commit message in a complete sentence in imperative present tense for the following diff without prefacing and with gitmoji convention it with anything:';
+const promptTemplate = 'Please write a concise and descriptive Git commit message using imperative present tense, complete sentences, and include Gitmoji at the beginning of the message. The commit message should describe the changes made in the following diff, without prefacing it with anything. Your commit message should be insightful and help others understand the changes made in the codebase. then give a description to the pull request';
 
 export const generateCommitMessage = async (
 	apiKey: string,
@@ -85,14 +85,14 @@ export const generateCommitMessage = async (
 			top_p: 1,
 			frequency_penalty: 0,
 			presence_penalty: 0,
-			max_tokens: 200,
+			max_tokens: 400,
 			stream: false,
 			n: completions,
 		});
 
 		return completion.data.choices
 			.filter(choice => choice.text)
-			.map(choice => sanitizeMessage(choice.text!));
+			.map(choice => sanitizeMessage(choice.text as string));
 	} catch (error) {
 		const errorAsAny = error as any;
 		errorAsAny.message = `OpenAI API Error: ${errorAsAny.message} - ${errorAsAny.response.statusText}`;

@@ -66,6 +66,8 @@ const argv = cli({
 	);
 	s.stop('Changes analyzed');
 
+	console.log(messages.join('\n'));
+
 	let message;
 	if (messages.length === 1) {
 		[message] = messages;
